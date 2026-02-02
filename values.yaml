@@ -1,0 +1,50 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: mysql
+  tag: "8.0"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  name: mysql
+  port: 3306
+  clusterIP: None
+
+auth:
+  rootPassword: rootpass
+  database: appdb
+  user: appuser
+  password: apppass
+
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 200Mi
+
+initdb:
+  enabled: true
+  sql: |
+    CREATE DATABASE IF NOT EXISTS appdb;
+
+    CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'apppass';
+    GRANT ALL PRIVILEGES ON appdb.* TO 'appuser'@'%';
+
+    CREATE USER IF NOT EXISTS 'appuser'@'localhost' IDENTIFIED BY 'apppass';
+    GRANT ALL PRIVILEGES ON appdb.* TO 'appuser'@'localhost';
+
+    FLUSH PRIVILEGES;
+
+    USE appdb;
+
+    CREATE TABLE IF NOT EXISTS counter (
+      id INT PRIMARY KEY,
+      visits INT
+    );
+
+    INSERT INTO counter (id, visits)
+    VALUES (1, 0)
+    ON DUPLICATE KEY UPDATE id=id;
