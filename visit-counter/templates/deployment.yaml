@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "visitCounter.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "visitCounter.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "visitCounter.fullname" . }}
+    spec:
+      {{- if .Values.initContainer.enabled }}
+      initContainers:
+        - name: wait-for-mysql
+          image: {{ .Values.initContainer.image }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for MySQL..."
+              until nc -z -v -w5 {{ .Values.db.host }} 3306
+              do
+                echo "MySQL is unavailable - sleeping"
+                sleep 3
+              done
+              echo "MySQL is up!"
+      {{- end }}
+      containers:
+        - name: app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: {{ .Values.db.host | quote }}
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secretName | quote }}
+                  key: {{ .Values.db.userKey | quote }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secretName | quote }}
+                  key: {{ .Values.db.passwordKey | quote }}
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secretName | quote }}
+                  key: {{ .Values.db.databaseKey | quote }}

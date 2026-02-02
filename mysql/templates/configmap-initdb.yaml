@@ -1,0 +1,9 @@
+{{- if .Values.initdb.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mysql.fullname" . }}-initdb
+data:
+  init-appdb.sql: |
+{{ .Values.initdb.sql | indent 4 }}
+{{- end }}

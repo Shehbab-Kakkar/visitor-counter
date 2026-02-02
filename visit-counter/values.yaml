@@ -1,0 +1,25 @@
+replicaCount: 2
+
+image:
+  repository: shehbab/visit-counter
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  name: visit-counter
+  type: NodePort
+  port: 80
+  targetPort: 8080
+  nodePort: 30000
+
+db:
+  host: mysql
+  # If you want the app to reuse the mysql chart's secret, keep these as-is:
+  secretName: mysql-secret   # you can override to "mysql-secret" or "mysql-secret from dependency"
+  userKey: MYSQL_USER
+  passwordKey: MYSQL_PASSWORD
+  databaseKey: MYSQL_DATABASE
+
+initContainer:
+  enabled: true
+  image: busybox:1.36
