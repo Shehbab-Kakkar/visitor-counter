@@ -1,0 +1,20 @@
+kind: Application
+metadata:
+  name: visit-counter
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Shehbab-Kakkar/visitor-counter'
+    targetRevision: main
+    path: visit-counter
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: 'https://kubernetes.default.svc'
+   # namespace: visitor-counter
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
