@@ -1,0 +1,5 @@
+```
+When we update dependency or any yaml file run these command and upgrade
+helm dependency build
+ helm upgrade vistor ./visit-counter/
+ ```
