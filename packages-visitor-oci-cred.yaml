@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-oci-repo-creds
+  namespace: argocd # Must be the namespace where Argo CD is installed
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  name: my-oci-repo
+  url: ghcr.io/shehbab-kakkar # Replace with your registry URL and organization
+  enableOCI: "true" # Required to enable OCI support
+  type: helm
+  username: "Shehbab-Kakkar" # Your username
+  password: "..." # Your Personal Access Token or password
+  # Optional: force HTTP Basic Auth negotiation
+  ForceHttpBasicAuth: "true"
