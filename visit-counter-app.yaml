@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: visit-counter
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # Must match the Secret's 'url' field exactly (no oci:// prefix)
+    repoURL: ghcr.io/shehbab-kakkar
+    # Provide the path to the chart within that registry
+    chart: charts/visit-counter
+    targetRevision: 0.3.0
+    helm:
+      releaseName: visit-counter
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
