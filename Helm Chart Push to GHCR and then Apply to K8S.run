@@ -1,0 +1,23 @@
+Helm Chart Push to GHCR and then Apply to K8S 
+
+helm version
+
+helm registry login ghcr.io -u $GHCR_USER -p $GHCR_TOKEN
+
+
+Helm Chart
+
+/root/visitor-counter 
+
+helm package visit-counter
+
+helm push visit-counter-0.1.0.tgz oci://ghcr.io/shehbab-kakkar/charts
+
+helm pull oci://ghcr.io/shehbab-kakkar/charts/visit-counter --version 0.1.0
+
+helm registry logout ghcr.io
+
+---
+Helm Chart Installation 
+
+helm install myapp oci://ghcr.io/shehbab-kakkar/charts/visit-counter --version 0.1.0
